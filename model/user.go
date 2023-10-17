@@ -8,10 +8,10 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string `json:"name"`
+	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"-"`
-	IsAdmin  bool   `json:"-"`
+	IsAdmin  bool   `json:"isAdmin"`
 }
 
 // Create User

@@ -8,8 +8,8 @@ import (
 
 type Contact struct {
 	gorm.Model
-	Contact string
-	userID  int
+	Contact string `json:"contact"`
+	UserID  int    `json:"userId"`
 }
 
 // create new business contact

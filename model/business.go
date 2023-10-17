@@ -9,17 +9,17 @@ import (
 
 type Business struct {
 	gorm.Model
-	Name        string
-	description string
-	location    string
-	contact     []string
-	category    []int
-	verified    bool
-	userID      int
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Location    string   `json:"loaction"`
+	Contact     []string `json:"contact"`
+	Category    []int    `json:"category"`
+	Verified    bool     `json:"verified"`
+	UserID      uint     `json:"userId"`
 }
 
 // Create a new business
-func createBusiness(business *Business) error {
+func CreateBusiness(business *Business) error {
 	var existingBusiness Business
 	newBusiness := db.Where("name = ?", business.Name).Limit(1).Find(&existingBusiness)
 
@@ -32,18 +32,18 @@ func createBusiness(business *Business) error {
 }
 
 // Update a business
-func updateBusiness(business *Business) error {
+func UpdateBusiness(business *Business) error {
 	updatedBusiness := db.Save(business)
 	return updatedBusiness.Error
 }
 
 // Delete Business
-func deleteBusiness(business *Business) {
+func DeleteBusiness(business *Business) {
 	db.Delete(business)
 }
 
 // List a users businesses
-func listUserBusiness(ID uint) []Business {
+func ListUserBusiness(ID uint) []Business {
 	var business []Business
 	db.Where("userId = ?", ID).Find(&business)
 	return business

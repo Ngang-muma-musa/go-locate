@@ -12,7 +12,7 @@ type BusinessCategory struct {
 }
 
 // Create a new business category
-func createBusinessCategory(category *BusinessCategory) error {
+func CreateBusinessCategory(category *BusinessCategory) error {
 	var existingCategory BusinessCategory
 	newCat := db.Where("categoty = ? ", category.Category).Limit(1).Find(&existingCategory)
 	if newCat.RowsAffected > 0 {
@@ -23,12 +23,12 @@ func createBusinessCategory(category *BusinessCategory) error {
 }
 
 // Delete a business category
-func deleteBusinesCategory(category *BusinessCategory) {
+func DeleteBusinesCategory(category *BusinessCategory) {
 	db.Delete(category)
 }
 
 // Get a business category by a specified ID
-func getBusinessCategoryByID(ID uint) *BusinessCategory {
+func GetBusinessCategoryByID(ID uint) *BusinessCategory {
 	var category BusinessCategory
 	res := db.First(&category, ID)
 	if res.RowsAffected == 0 {
