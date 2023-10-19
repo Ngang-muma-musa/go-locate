@@ -13,7 +13,7 @@ type Contact struct {
 }
 
 // create new business contact
-func createContact(contact *Contact) error {
+func CreateContact(contact *Contact) error {
 	var existtingContact Contact
 	newContact := db.Where("contact = ?", contact.Contact).Limit(1).Find(&existtingContact)
 	if newContact.RowsAffected > 0 {
@@ -24,19 +24,19 @@ func createContact(contact *Contact) error {
 }
 
 // Delete busines contact
-func deleteContact(contact *Contact) {
+func DeleteContact(contact *Contact) {
 	db.Delete(contact)
 }
 
 // Get List of business contacts
-func getBusinessContactList(ID uint) []Contact {
+func GetBusinessContactList(ID uint) []Contact {
 	var contacts []Contact
 	db.Where("userId = ?", ID).Find(&contacts)
 	return contacts
 }
 
 // update business contact
-func updateContact(contact Contact) error {
+func UpdateContact(contact Contact) error {
 	updatedContact := db.Save(contact)
 	return updatedContact.Error
 }
