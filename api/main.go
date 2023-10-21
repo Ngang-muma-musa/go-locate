@@ -18,11 +18,12 @@ var (
 	JWTConfig  echojwt.Config
 )
 
-func inti() {
+func init() {
 	err := godotenv.Load()
 	if err != nil {
 		panic(err)
 	}
+	e = echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
 	signingKey = os.Getenv("JWT_SECRET")
 	JWTConfig = echojwt.Config{
@@ -37,7 +38,6 @@ func inti() {
 			return false
 		},
 	}
-	e = echo.New()
 	fmt.Println("Hello, world!")
 }
 
