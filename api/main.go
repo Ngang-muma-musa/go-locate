@@ -2,8 +2,10 @@ package api
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
@@ -42,7 +44,16 @@ func init() {
 }
 
 func Start() {
+	var wg sync.WaitGroup
 	e.Use(echojwt.WithConfig(JWTConfig))
 	base := e.Group("")
 	addAuthRoutes(base)
+	wg.Add(1)
+	go func() {
+		if err := e.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal("shutting down the server")
+			wg.Done()
+		}
+	}()
+	wg.Wait()
 }

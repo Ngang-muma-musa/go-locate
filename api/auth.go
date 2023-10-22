@@ -14,6 +14,11 @@ type (
 		Password string `json:"password" validate:"required,min=8"`
 	}
 
+	Login struct {
+		Email    string `json:"email" validate:"required,email"`
+		Password string `json:"password" validate:"required,min=8"`
+	}
+
 	RegisterRes struct {
 		ID uint `json:"id"`
 	}
@@ -40,4 +45,13 @@ func register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, e.Error())
 	}
 	return c.JSON(http.StatusCreated, &RegisterRes{ID: user.ID})
+}
+
+func login(c echo.Context) error {
+	var req Login
+	var err error
+	if err = c.Bind(&req); err != nil {
+		return err
+	}
+	return err
 }
