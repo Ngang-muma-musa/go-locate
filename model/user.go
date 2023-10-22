@@ -44,7 +44,7 @@ func GetUserByID(ID uint) *User {
 // Get user by email
 func GetUserByEmail(email string) *User {
 	var user User
-	res := db.First(&user, email)
+	res := db.First(&user, "email = ?", email)
 	if res.RowsAffected == 0 {
 		return nil
 	}
