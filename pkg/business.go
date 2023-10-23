@@ -6,20 +6,20 @@ import (
 )
 
 type BusinessInfo struct {
-	Business model.Business           `json:"business"`
-	Contact  []model.Contact          `json:"contact"`
-	Category []model.BusinessCategory `json:"category"`
+	Business model.Business   `json:"business"`
+	Contact  []model.Contact  `json:"contact"`
+	Category []model.Category `json:"category"`
 }
 
-func CreateBusiness(name string, description string, email string, location string, phoneNumber string, user model.User, category string) (*model.Business, error) {
+func CreateBusiness(name string, description string, email string, location string, user *model.User, contact []model.Contact, category []model.BusinessCategory) (*model.Business, error) {
 	business := &model.Business{
 		Name:        name,
 		Description: description,
 		Location:    location,
+		PhoneNumber: contact,
+		Category:    category,
 		Email:       email,
 		UserID:      user.ID,
-		PhoneNumber: phoneNumber,
-		Category:    category,
 		Verified:    false,
 	}
 

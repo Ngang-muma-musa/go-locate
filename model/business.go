@@ -8,14 +8,14 @@ import (
 
 type Business struct {
 	gorm.Model
-	Name        string `json:"name"`
-	Email       string `gorm:"unique" json:"email"`
-	PhoneNumber string `json:"phoneNumber"`
-	Category    string `json:"category"`
-	Description string `json:"description"`
-	Location    string `json:"loaction"`
-	Verified    bool   `json:"verified"`
-	UserID      uint   `json:"userId"`
+	Name        string             `json:"name"`
+	Email       string             `gorm:"unique" json:"email"`
+	PhoneNumber []Contact          `gorm:"foreignKey:BusinessId;references:ID;constraint:onDelete:SET NULL,onUpdate:CASCADE" json:"-" `
+	Category    []BusinessCategory `gorm:"foreignKey:BusinessId;references:ID;constraint:onDelete:SET NULL,onUpdate:CASCADE"  json:"-"`
+	Description string             `json:"description"`
+	Location    string             `json:"loaction"`
+	Verified    bool               `json:"verified"`
+	UserID      uint               `json:"userId"`
 }
 
 type BusinessSearch struct {
@@ -25,14 +25,19 @@ type BusinessSearch struct {
 
 // Create a new business
 func CreateBusiness(business *Business) error {
-	var existingBusiness Business
-	err := db.Where("name = ?", business.Name).Limit(1).Find(&existingBusiness).Error
-	return err
+	err := db.Create(business)
+	if err != nil {
+		return nil
+	}
+	return err.Error
 }
 
 // Update a business
 func UpdateBusiness(business *Business) error {
 	err := db.Save(business).Error
+	if err != nil {
+		return nil
+	}
 	return err
 }
 
@@ -61,11 +66,11 @@ func GetBusinessByID(ID uint) *Business {
 
 // get business by name
 func GetBusinessByName(name string) *Business {
-	var busines Business
-	if err := db.First(&busines, strings.ToLower(name)).Error; err != nil {
+	var business Business
+	if err := db.First(&business, "name = ?", strings.ToLower(name)).Error; err != nil {
 		return nil
 	}
-	return &busines
+	return &business
 }
 
 // Find business by Location and Category

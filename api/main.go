@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -29,6 +30,9 @@ func init() {
 	e.Validator = &CustomValidator{validator: validator.New()}
 	signingKey = os.Getenv("JWT_SECRET")
 	JWTConfig = echojwt.Config{
+		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+			return new(JwtCustomClaims)
+		},
 		SigningKey: []byte(signingKey),
 		Skipper: func(c echo.Context) bool {
 			freeRoutes := []string{"/auth/login", "/auth/register"}
@@ -48,6 +52,7 @@ func Start() {
 	e.Use(echojwt.WithConfig(JWTConfig))
 	base := e.Group("")
 	addAuthRoutes(base)
+	addBusinessRoutes(base)
 	wg.Add(1)
 	go func() {
 		if err := e.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))); err != nil && err != http.ErrServerClosed {

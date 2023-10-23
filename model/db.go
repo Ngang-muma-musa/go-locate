@@ -14,6 +14,7 @@ var db *gorm.DB
 var modelsToMigrate = []interface{}{
 	&User{},
 	&Business{},
+	&Category{},
 	&BusinessCategory{},
 	&Contact{},
 }

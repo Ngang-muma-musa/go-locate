@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"go-locate/model"
 	"go-locate/pkg"
 	"net/http"
@@ -14,6 +15,11 @@ import (
 
 const (
 	JWTDefaultTTL = 72 * time.Hour
+)
+
+var (
+	// ErrUnauthorized is when ther user is not authorized.
+	ErrUnauthorized = errors.New("unauthorized")
 )
 
 type (

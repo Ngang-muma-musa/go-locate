@@ -2,7 +2,6 @@ package api
 
 import (
 	"go-locate/model"
-	"log"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
@@ -29,10 +28,9 @@ type (
 	}
 )
 
-type agggregatedLogger struct {
-	inFoLogger  *log.Logger
-	warnLogger  *log.Logger
-	errorLogger *log.Logger
+// Valid implements jwt.Claims.
+func (*JwtCustomClaims) Valid() error {
+	panic("unimplemented")
 }
 
 // Validate validates the interface.
@@ -50,16 +48,4 @@ func ClaimsFromContext(c echo.Context) *JwtCustomClaims {
 func GetUserFromContext(c echo.Context) *model.User {
 	claims := ClaimsFromContext(c)
 	return model.GetUserByID(claims.UserID)
-}
-
-func (l *agggregatedLogger) Info(v ...interface{}) {
-	l.inFoLogger.Println(v...)
-}
-
-func (l *agggregatedLogger) Warn(v ...interface{}) {
-	l.warnLogger.Println(v...)
-}
-
-func (l *agggregatedLogger) Error(v ...interface{}) {
-	l.errorLogger.Println(v...)
 }
