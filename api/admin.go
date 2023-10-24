@@ -4,6 +4,7 @@ import (
 	"go-locate/model"
 	"go-locate/pkg"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -16,10 +17,15 @@ type (
 	CategoryRes struct {
 		Category *model.Category `json:"category"`
 	}
+
+	VerifyReq struct {
+		ID int `json:"id" validate:"required"`
+	}
 )
 
 func addAdminRoutes(c *echo.Group) {
 	c.POST("/admin/category", createCategory)
+	c.POST("/admin/verify-business/:id", verifyBusiness)
 }
 
 func createCategory(c echo.Context) error {
@@ -49,4 +55,13 @@ func createCategory(c echo.Context) error {
 	}
 
 	return echo.NewHTTPError(http.StatusCreated, CategoryRes{Category: category})
+}
+
+func verifyBusiness(c echo.Context) error {
+	ID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	err = pkg.VarifyBusiness(ID)
+	return err
 }

@@ -5,8 +5,14 @@ import (
 	"go-locate/model"
 )
 
-func varifyBusiness(ID uint) {
-
+func VarifyBusiness(ID int) error {
+	busines, err := model.GetBusinessByID(ID)
+	if err != nil {
+		return err
+	}
+	busines.Verified = true
+	err = model.UpdateBusiness(busines)
+	return err
 }
 
 func CreateCategory(c string) (*model.Category, error) {

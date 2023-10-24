@@ -57,13 +57,21 @@ func ListUserBusiness(ID uint) []Business {
 	return business
 }
 
-// Get business by ID
-func GetBusinessByID(ID uint) *Business {
-	var busines Business
-	if err := db.First(&busines, ID).Error; err != nil {
+func ListUnverifiedBusinesses() []Business {
+	var businesses []Business
+	if err := db.Where("verified = ?", false).Find(&businesses).Error; err != nil {
 		return nil
 	}
-	return &busines
+	return businesses
+}
+
+// Get business by ID
+func GetBusinessByID(ID int) (*Business, error) {
+	var busines Business
+	if err := db.First(&busines, ID).Error; err != nil {
+		return nil, err
+	}
+	return &busines, nil
 }
 
 // get business by name
