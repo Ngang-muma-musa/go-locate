@@ -17,8 +17,8 @@ func CreateBusinessCategory(c *Category) error {
 
 func GetCategoryByName(categoryName string) *Category {
 	var category Category
-	res := db.First(&category, "category = ?", categoryName)
-	if res.RowsAffected == 0 {
+
+	if err := db.First(&category, "category = ?", categoryName).Error; err != nil {
 		return nil
 	}
 	return &category

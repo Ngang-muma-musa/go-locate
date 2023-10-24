@@ -18,8 +18,8 @@ type (
 	}
 )
 
-func addCategoryRoutes(c *echo.Group) {
-	c.POST("/category", createBusiness)
+func addAdminRoutes(c *echo.Group) {
+	c.POST("/admin/category", createCategory)
 }
 
 func createCategory(c echo.Context) error {

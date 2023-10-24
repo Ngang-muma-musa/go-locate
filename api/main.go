@@ -53,6 +53,7 @@ func Start() {
 	base := e.Group("")
 	addAuthRoutes(base)
 	addBusinessRoutes(base)
+	addAdminRoutes(base)
 	e.GET("/business", findBusiness)
 	wg.Add(1)
 	go func() {

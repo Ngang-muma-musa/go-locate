@@ -67,5 +67,5 @@ func findBusiness(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return echo.NewHTTPError(http.StatusBadRequest, BusinessesRes{Business: business})
+	return echo.NewHTTPError(http.StatusAccepted, BusinessesRes{Business: business})
 }

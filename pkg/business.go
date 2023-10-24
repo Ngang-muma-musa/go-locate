@@ -13,14 +13,14 @@ type BusinessInfo struct {
 
 func CreateBusiness(name string, description string, email string, location string, user *model.User, contact []model.Contact, category []model.BusinessCategory) (*model.Business, error) {
 	business := &model.Business{
-		Name:        name,
-		Description: description,
-		Location:    location,
-		PhoneNumber: contact,
-		Category:    category,
-		Email:       email,
-		UserID:      user.ID,
-		Verified:    false,
+		Name:         name,
+		Description:  description,
+		Location:     location,
+		PhoneNumbers: contact,
+		Categories:   category,
+		Email:        email,
+		UserID:       user.ID,
+		Verified:     false,
 	}
 
 	if businessExist := model.GetBusinessByName(name); businessExist != nil {

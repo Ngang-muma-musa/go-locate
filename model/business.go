@@ -5,18 +5,19 @@ import (
 	"strings"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Business struct {
 	gorm.Model
-	Name        string             `json:"name"`
-	Email       string             `gorm:"unique" json:"email"`
-	PhoneNumber []Contact          `gorm:"foreignKey:BusinessId;references:ID;constraint:onDelete:SET NULL,onUpdate:CASCADE" json:"-" `
-	Category    []BusinessCategory `gorm:"many2many:business_categories;foreignKey:BusinessId;references:ID;constraint:onDelete:SET NULL,onUpdate:CASCADE" json:"-"`
-	Description string             `json:"description"`
-	Location    string             `json:"loaction"`
-	Verified    bool               `json:"verified"`
-	UserID      uint               `json:"userId"`
+	Name         string             `json:"name"`
+	Email        string             `gorm:"unique" json:"email"`
+	PhoneNumbers []Contact          `json:"phonenumbers" `
+	Categories   []BusinessCategory `json:"categories"`
+	Description  string             `json:"description"`
+	Location     string             `json:"loaction"`
+	Verified     bool               `json:"verified"`
+	UserID       uint               `json:"userId"`
 }
 
 type BusinessSearch struct {
@@ -78,11 +79,11 @@ func GetBusinessByName(name string) *Business {
 func GetBusinessByCategoryOrLocation(options BusinessSearch) (*[]Business, error) {
 	var business []Business
 	if options.Category == 0 && options.Location != "" {
-		db.Where("location = ?", options.Location).Find(&business)
+		db.Where("location = ?", options.Location).Where("verified = ?", true).Find(&business)
 	} else if options.Category != 0 && options.Location == "" {
-		db.Model(&Business{}).Preload("Category.Category", "id = ?", options.Category).Preload("PhoneNumber.Contact").Find(&business)
+		db.Model(&Business{}).Preload(clause.Associations).Where("verified = ?", true).Find(&business)
 	} else if options.Category != 0 && options.Location != "" {
-		db.Model(&Business{}).Preload("Category.Category", "id = ?", options.Category).Preload("PhoneNumber.Contact").Where("location = ?", options.Location).Find(&business)
+		db.Model(&Business{}).Preload(clause.Associations).Where("location = ?", options.Location).Where("verified = ?", true).Find(&business)
 	} else {
 		return nil, errors.New("Atleat one query param needed")
 	}
