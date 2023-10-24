@@ -36,7 +36,7 @@ func CreateBusiness(name string, description string, email string, location stri
 
 }
 
-func findBusiness(location string, category string) (*[]model.Business, error) {
+func FindBusiness(location string, category int) (*[]model.Business, error) {
 	params := &model.BusinessSearch{
 		Location: location,
 		Category: category,

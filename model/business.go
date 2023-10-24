@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"strings"
 
 	"gorm.io/gorm"
@@ -11,7 +12,7 @@ type Business struct {
 	Name        string             `json:"name"`
 	Email       string             `gorm:"unique" json:"email"`
 	PhoneNumber []Contact          `gorm:"foreignKey:BusinessId;references:ID;constraint:onDelete:SET NULL,onUpdate:CASCADE" json:"-" `
-	Category    []BusinessCategory `gorm:"foreignKey:BusinessId;references:ID;constraint:onDelete:SET NULL,onUpdate:CASCADE"  json:"-"`
+	Category    []BusinessCategory `gorm:"many2many:business_categories;foreignKey:BusinessId;references:ID;constraint:onDelete:SET NULL,onUpdate:CASCADE" json:"-"`
 	Description string             `json:"description"`
 	Location    string             `json:"loaction"`
 	Verified    bool               `json:"verified"`
@@ -20,7 +21,7 @@ type Business struct {
 
 type BusinessSearch struct {
 	Location string
-	Category string
+	Category int
 }
 
 // Create a new business
@@ -76,9 +77,14 @@ func GetBusinessByName(name string) *Business {
 // Find business by Location and Category
 func GetBusinessByCategoryOrLocation(options BusinessSearch) (*[]Business, error) {
 	var business []Business
-	res := db.Where("location = ?", options.Location).Find(&business)
-	if options.Location != "" {
-		res.Where("category = ?", options.Category)
+	if options.Category == 0 && options.Location != "" {
+		db.Where("location = ?", options.Location).Find(&business)
+	} else if options.Category != 0 && options.Location == "" {
+		db.Model(&Business{}).Preload("Category.Category", "id = ?", options.Category).Preload("PhoneNumber.Contact").Find(&business)
+	} else if options.Category != 0 && options.Location != "" {
+		db.Model(&Business{}).Preload("Category.Category", "id = ?", options.Category).Preload("PhoneNumber.Contact").Where("location = ?", options.Location).Find(&business)
+	} else {
+		return nil, errors.New("Atleat one query param needed")
 	}
 	return &business, nil
 }

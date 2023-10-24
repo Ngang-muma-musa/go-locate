@@ -4,6 +4,7 @@ import (
 	"go-locate/model"
 	"go-locate/pkg"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -20,6 +21,10 @@ type (
 
 	BusinessRes struct {
 		Business *model.Business `json:"business"`
+	}
+
+	BusinessesRes struct {
+		Business *[]model.Business
 	}
 )
 
@@ -46,5 +51,21 @@ func createBusiness(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, e.Error())
 	}
 
-	return echo.NewHTTPError(http.StatusBadRequest, BusinessRes{Business: bussines})
+	return echo.NewHTTPError(http.StatusCreated, BusinessRes{Business: bussines})
+}
+
+func findBusiness(c echo.Context) error {
+	location := c.QueryParam("location")
+	category, err := strconv.Atoi(c.QueryParam("category"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	business, err := pkg.FindBusiness(location, category)
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return echo.NewHTTPError(http.StatusBadRequest, BusinessesRes{Business: business})
 }

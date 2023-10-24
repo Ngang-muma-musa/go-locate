@@ -7,3 +7,7 @@ type BusinessCategory struct {
 	CategoryId uint `json:"categoryId"`
 	BusinessId uint `json:"businessId"`
 }
+
+func AddBusinesCategory() {
+
+}

@@ -53,6 +53,7 @@ func Start() {
 	base := e.Group("")
 	addAuthRoutes(base)
 	addBusinessRoutes(base)
+	e.GET("/business", findBusiness)
 	wg.Add(1)
 	go func() {
 		if err := e.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))); err != nil && err != http.ErrServerClosed {
