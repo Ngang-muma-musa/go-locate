@@ -48,6 +48,14 @@ func addAuthRoutes(c *echo.Group) {
 	c.POST("/auth/login", login)
 }
 
+// @Summary      Register
+// @Description  registers a new user
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        user body RegisterReq true "req"
+// @Success      200  {object}  RegisterRes
+// @Router       /auth/register [post]
 func register(c echo.Context) error {
 	var req RegisterReq
 	var err error
@@ -66,6 +74,14 @@ func register(c echo.Context) error {
 	return c.JSON(http.StatusCreated, &RegisterRes{ID: user.ID})
 }
 
+// @Summary      Login
+// @Description  Login a user
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        user body LoginReq true "req"
+// @Success      200  {object}  LoginRes
+// @Router       /auth/login [post]
 func login(c echo.Context) error {
 	var req LoginReq
 	if err := c.Bind(&req); err != nil {

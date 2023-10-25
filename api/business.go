@@ -32,6 +32,14 @@ func addBusinessRoutes(c *echo.Group) {
 	c.POST("/business", createBusiness)
 }
 
+// @Summary      Create Business
+// @Description  Creates a new business
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        business body BusinessReq false "req"
+// @Success      200  {object}  BusinessRes
+// @Router       /business [post]
 func createBusiness(c echo.Context) error {
 	var req BusinessReq
 	var err error
@@ -54,6 +62,14 @@ func createBusiness(c echo.Context) error {
 	return echo.NewHTTPError(http.StatusCreated, BusinessRes{Business: bussines})
 }
 
+// @Summary      Find business
+// @Description  Finds a business using category and location
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        location   path  string  true  "Business location"
+// @Success      200  {object}  BusinessesRes
+// @Router       /business [get]
 func findBusiness(c echo.Context) error {
 	location := c.QueryParam("location")
 	category, err := strconv.Atoi(c.QueryParam("category"))
