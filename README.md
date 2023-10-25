@@ -10,7 +10,7 @@ go get
 go run main.go
 ```
 ## Api doc
-[ http://localhost:1323/swagger/index.html] http://localhost:1323/swagger/index.html,
+http://localhost:1323/swagger/index.html,
 
 
 
