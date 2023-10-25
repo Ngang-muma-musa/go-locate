@@ -21,6 +21,10 @@ type (
 	VerifyReq struct {
 		ID int `json:"id" validate:"required"`
 	}
+
+	VerifyRes struct {
+		Business *model.Business
+	}
 )
 
 func addAdminRoutes(c *echo.Group) {
@@ -63,5 +67,12 @@ func verifyBusiness(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	err = pkg.VarifyBusiness(ID)
-	return err
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	business, err := model.GetBusinessByID(ID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return echo.NewHTTPError(http.StatusAccepted, VerifyRes{Business: business})
 }
