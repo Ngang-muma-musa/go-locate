@@ -32,6 +32,31 @@ func InitDB(username, password, host, port, dbName string) error {
 	return nil
 }
 
+func ClearTables(models ...any) {
+	for _, model := range models {
+		switch model.(type) {
+		case *User:
+			db.Exec("truncate table `users`")
+		case *Business:
+			db.Exec("truncate table `businesses`")
+		case *BusinessCategory:
+			db.Exec("truncate table `busineess_category`")
+		case *Category:
+			db.Exec("truncate table `categories`")
+		case *Contact:
+			db.Exec("truncate table `contacts`")
+		}
+	}
+}
+
+// CloseDB closes the underlying database connection.
+func CloseDB() {
+	sqlDB, err := db.DB()
+	if err == nil {
+		sqlDB.Close()
+	}
+}
+
 // syncDatabase migrates models to the database
 func syncDatabase() {
 	err := db.AutoMigrate(modelsToMigrate...)
