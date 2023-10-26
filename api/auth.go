@@ -2,8 +2,7 @@ package api
 
 import (
 	"errors"
-	"go-locate/model"
-	"go-locate/pkg"
+	"go-locate/services"
 	"net/http"
 	"os"
 	"time"
@@ -43,11 +42,24 @@ type (
 	}
 )
 
-func addAuthRoutes(c *echo.Group) {
-	c.POST("/auth/register", register)
-	c.POST("/auth/login", login)
+type Auth struct {
+	userService *services.User
 }
 
+func NewAuth(userService *services.User) *Auth {
+	return &Auth{userService: userService}
+}
+
+func (a *Auth) ProvideRoutes(c *echo.Group) {
+	c.POST("/auth/register", a.Register)
+	c.POST("/auth/login", a.Login)
+}
+
+func (a *Auth) Group() string {
+	return "/auth"
+}
+
+// Register
 // @Summary      Register
 // @Description  registers a new user
 // @Tags         Auth
@@ -56,7 +68,7 @@ func addAuthRoutes(c *echo.Group) {
 // @Param        user body RegisterReq true "req"
 // @Success      200  {object}  RegisterRes
 // @Router       /auth/register [post]
-func register(c echo.Context) error {
+func (a *Auth) Register(c echo.Context) error {
 	var req RegisterReq
 	var err error
 	if err = c.Bind(&req); err != nil {
@@ -67,13 +79,14 @@ func register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	user, e := pkg.CreateUser(req.Username, req.Password, req.Email)
+	user, e := a.userService.Create(req.Username, req.Password, req.Email)
 	if e != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, e.Error())
 	}
 	return c.JSON(http.StatusCreated, &RegisterRes{ID: user.ID})
 }
 
+// Login
 // @Summary      Login
 // @Description  Login a user
 // @Tags         Auth
@@ -82,7 +95,7 @@ func register(c echo.Context) error {
 // @Param        user body LoginReq true "req"
 // @Success      200  {object}  LoginRes
 // @Router       /auth/login [post]
-func login(c echo.Context) error {
+func (a *Auth) Login(c echo.Context) error {
 	var req LoginReq
 	if err := c.Bind(&req); err != nil {
 		return err
@@ -92,7 +105,7 @@ func login(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	user := model.GetUserByEmail(req.Email)
+	user := a.userService.GetByEmail(req.Email)
 	if user == nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "one or more details is incorrect")
 	}

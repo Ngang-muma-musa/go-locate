@@ -2,7 +2,7 @@ package api
 
 import (
 	"go-locate/model"
-	"go-locate/pkg"
+	"go-locate/services"
 	"net/http"
 	"strconv"
 
@@ -22,16 +22,26 @@ type (
 	BusinessRes struct {
 		Business *model.Business `json:"business"`
 	}
-
-	BusinessesRes struct {
-		Business *[]model.Business
-	}
 )
 
-func addBusinessRoutes(c *echo.Group) {
-	c.POST("/business", createBusiness)
+type Business struct {
+	businessService *services.Business
 }
 
+func NewBusiness(businessService *services.Business) *Business {
+	return &Business{businessService: businessService}
+}
+
+func (b *Business) ProvideRoutes(c *echo.Group) {
+	c.POST("/business", b.Create)
+	c.GET("/business", b.Find)
+}
+
+func (b *Business) Group() string {
+	return "/business"
+}
+
+// Create
 // @Summary      Create Business
 // @Description  Creates a new business
 // @Tags         Auth
@@ -40,7 +50,7 @@ func addBusinessRoutes(c *echo.Group) {
 // @Param        business body BusinessReq false "req"
 // @Success      200  {object}  BusinessRes
 // @Router       /business [post]
-func createBusiness(c echo.Context) error {
+func (b *Business) Create(c echo.Context) error {
 	var req BusinessReq
 	var err error
 	if err = c.Bind(&req); err != nil {
@@ -53,15 +63,16 @@ func createBusiness(c echo.Context) error {
 	if err = c.Validate(req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	bussines, e := pkg.CreateBusiness(req.Name, req.Description, req.Email, req.Location, user, req.PhoneNumber, req.Category)
+	business, e := b.businessService.Create(req.Name, req.Description, req.Email, req.Location, user, req.PhoneNumber, req.Category)
 
 	if e != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, e.Error())
 	}
 
-	return echo.NewHTTPError(http.StatusCreated, BusinessRes{Business: bussines})
+	return echo.NewHTTPError(http.StatusCreated, BusinessRes{Business: business})
 }
 
+// Find
 // @Summary      Find business
 // @Description  Finds a business using category and location
 // @Tags         Auth
@@ -70,18 +81,17 @@ func createBusiness(c echo.Context) error {
 // @Param        location   path  string  true  "Business location"
 // @Success      200  {object}  BusinessesRes
 // @Router       /business [get]
-func findBusiness(c echo.Context) error {
+func (b *Business) Find(c echo.Context) error {
 	location := c.QueryParam("location")
 	category, err := strconv.Atoi(c.QueryParam("category"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	business, err := pkg.FindBusiness(location, category)
-
+	business, err := b.businessService.Find(location, category)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return echo.NewHTTPError(http.StatusAccepted, BusinessesRes{Business: business})
+	return echo.NewHTTPError(http.StatusAccepted, business)
 }

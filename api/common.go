@@ -14,9 +14,9 @@ type (
 		Error string `json:"error,omitempty"`
 	}
 
-	// CustomValidator is a custom validator.
+	// CustomValidator is a custom Validator.
 	CustomValidator struct {
-		validator *validator.Validate
+		Validator *validator.Validate
 	}
 
 	// JwtCustomClaims are custom claims extending default ones.
@@ -35,7 +35,7 @@ func (*JwtCustomClaims) Valid() error {
 
 // Validate validates the interface.
 func (c *CustomValidator) Validate(i interface{}) error {
-	return c.validator.Struct(i)
+	return c.Validator.Struct(i)
 }
 
 // ClaimsFromContext extracts the claims from the http request context.
@@ -46,6 +46,5 @@ func ClaimsFromContext(c echo.Context) *JwtCustomClaims {
 
 // GetUserFromContext returns the full user from the request context.
 func GetUserFromContext(c echo.Context) *model.User {
-	claims := ClaimsFromContext(c)
-	return model.GetUserByID(claims.UserID)
+	return c.Get("user").(*model.User)
 }
