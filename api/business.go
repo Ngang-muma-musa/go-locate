@@ -16,7 +16,7 @@ type (
 		PhoneNumber []model.Contact          `json:"phoneNumber"`
 		Category    []model.BusinessCategory `json:"category"`
 		Description string                   `json:"description" validate:"required"`
-		Location    string                   `json:"location" validate:"required"`
+		Location    []model.BusinessLocation `json:"location" validate:"required"`
 	}
 
 	BusinessRes struct {

@@ -45,7 +45,13 @@ func TestCreate(t *testing.T) {
 			},
 		},
 		Description: "Description for test business",
-		Location:    "Buea",
+		Location: []model.BusinessLocation{
+			{
+				MainLocation: "Buea",
+				Description:  "Test description",
+				Map:          "This is supposed to be an Iframe of a map",
+			},
+		},
 	}
 
 	business, e := businessService.Create(arg.Name, arg.Description, arg.Email, arg.Location, user, arg.PhoneNumbers, arg.Categories)

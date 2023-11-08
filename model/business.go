@@ -11,7 +11,7 @@ type Business struct {
 	PhoneNumbers []Contact          `json:"phonenumbers" `
 	Categories   []BusinessCategory `json:"categories"`
 	Description  string             `json:"description"`
-	Location     string             `json:"loaction"`
+	Location     []BusinessLocation `json:"loaction"`
 	Verified     bool               `json:"verified"`
 	UserID       uint               `json:"userId"`
 }

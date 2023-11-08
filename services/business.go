@@ -14,7 +14,7 @@ func NewBusiness(businessRepo *repository.Business) *Business {
 	return &Business{businessRepo: businessRepo}
 }
 
-func (b *Business) Create(name string, description string, email string, location string, user *model.User, contact []model.Contact, category []model.BusinessCategory) (*model.Business, error) {
+func (b *Business) Create(name string, description string, email string, location []model.BusinessLocation, user *model.User, contact []model.Contact, category []model.BusinessCategory) (*model.Business, error) {
 	business := &model.Business{
 		Name:         name,
 		Description:  description,

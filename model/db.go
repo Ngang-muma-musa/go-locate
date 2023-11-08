@@ -17,6 +17,7 @@ var modelsToMigrate = []interface{}{
 	&Category{},
 	&BusinessCategory{},
 	&Contact{},
+	&BusinessLocation{},
 }
 
 // InitDB initializes the database connection
