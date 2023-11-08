@@ -32,8 +32,8 @@ func TestCreate(t *testing.T) {
 	}
 
 	arg := &model.Business{
-		Name:  "Test Business",
-		Email: "test@gmail.com",
+		Name:  "Test Business3",
+		Email: "test3@gmail.com",
 		PhoneNumbers: []model.Contact{
 			{
 				Contact: "237679165995",
@@ -58,4 +58,6 @@ func TestCreate(t *testing.T) {
 
 	require.NoError(t, e)
 	require.NotEmpty(t, business)
+
+	db.Exec("truncate table `businesses`")
 }
