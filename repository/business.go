@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"go-locate/model"
+
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -72,11 +73,11 @@ func (b *Business) ListByVerificationStatus(status bool) []model.Business {
 func (b *Business) GetBusinessByCategoryOrLocation(options model.BusinessSearch) ([]model.Business, error) {
 	var business []model.Business
 	if options.Category == 0 && options.Location != "" {
-		b.db.Where("location = ?", options.Location).Where("verified = ?", true).Find(&business)
+		b.db.Joins("JOIN business_locations ON businesses.id = busniness_locations.business_id").Preload(clause.Associations).Find(&business, "businesses.verified = ?", true)
 	} else if options.Category != 0 && options.Location == "" {
-		b.db.Model(&Business{}).Preload(clause.Associations).Where("verified = ?", true).Find(&business)
+		b.db.Joins("JOIN business_categories ON businesses.id = business_categories.business_id").Preload(clause.Associations).Find(&business, "businesses.verified = ?", true)
 	} else if options.Category != 0 && options.Location != "" {
-		b.db.Model(&Business{}).Preload(clause.Associations).Where("location = ?", options.Location).Where("verified = ?", true).Find(&business)
+		b.db.Joins("JOIN business_locations ON businesses.id = busniness_locations.business_id").Joins("JOIN business_categories ON businesses.id = business_categories.business_id").Preload(clause.Associations).Find(&business, "businesses.verified = ?", true)
 	} else {
 		return nil, errors.New("at least one query param needed")
 	}
